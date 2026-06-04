@@ -1,6 +1,4 @@
-# Vanilla PHP + Smarty Blog (skeleton)
-
-Инфраструктура проекта: обвязка, миграции, сидеры. Страницы блога — в следующих коммитах.
+# Vanilla PHP + Smarty Blog
 
 ## Требования
 
@@ -46,7 +44,5 @@ php bin/seed              # сидеры (5 категорий, 30 статей)
 
 ```bash
 docker compose up -d
-# в контейнере php: composer install && php bin/migrate && php bin/seed
+в контейнере php: composer install && php bin/migrate && php bin/seed
 ```
-
-Apache в образе `php:8.2-apache` по умолчанию смотрит в `/var/www/html`; для production настройте `DocumentRoot` на `public/`.
