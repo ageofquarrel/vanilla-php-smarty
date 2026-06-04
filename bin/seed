@@ -1,0 +1,15 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use App\Core\App;
+use App\Database\Seeders\DatabaseSeeder;
+
+require dirname(__DIR__) . '/vendor/autoload.php';
+
+App::create(dirname(__DIR__));
+
+DatabaseSeeder::run();
+
+echo "Database seeded.\n";

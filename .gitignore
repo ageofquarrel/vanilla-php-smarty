@@ -1,0 +1,4 @@
+/vendor/
+.env
+/storage/cache/smarty/*
+!/storage/cache/smarty/.gitkeep

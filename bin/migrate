@@ -1,0 +1,30 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use App\Core\App;
+use App\Database\Connection;
+use App\Database\MigrationRunner;
+
+require dirname(__DIR__) . '/vendor/autoload.php';
+
+App::create(dirname(__DIR__));
+$command = $argv[1] ?? 'migrate';
+
+$runner = new MigrationRunner(
+    Connection::pdo(),
+    dirname(__DIR__) . '/database/migrations'
+);
+
+if ($command === 'rollback') {
+    $steps = isset($argv[2]) ? (int) $argv[2] : 1;
+    $runner->rollback($steps);
+    echo "Rolled back {$steps} migration(s).\n";
+    exit(0);
+}
+
+$applied = $runner->migrate();
+echo $applied === 0
+    ? "Nothing to migrate.\n"
+    : "Migrated {$applied} file(s).\n";
