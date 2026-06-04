@@ -8,7 +8,6 @@ abstract class Model
 {
     protected static string $table;
 
-    /** @param array<string, mixed> $attributes */
     public function __construct(protected array $attributes = [])
     {
     }
@@ -25,7 +24,6 @@ abstract class Model
         return $id === null ? null : (int) $id;
     }
 
-    /** @return array<string, mixed> */
     public function toArray(): array
     {
         return $this->attributes;
@@ -36,7 +34,6 @@ abstract class Model
         return static::$table;
     }
 
-    /** @param array<string, mixed> $row */
     public static function fromRow(array $row): static
     {
         return new static($row);

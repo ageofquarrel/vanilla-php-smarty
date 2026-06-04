@@ -130,6 +130,33 @@ a:hover {
     color: #6b7280;
 }
 
+.back-link {
+    margin: 0 0 1.5rem;
+}
+
+.category-page__header {
+    margin-bottom: 1.5rem;
+}
+
+.category-page__title {
+    margin: 0 0 0.5rem;
+}
+
+.category-page__description {
+    margin: 0;
+    color: #4b5563;
+}
+
+.article-card__meta {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.article-card__views {
+    margin-left: 1rem;
+}
+
 @media (max-width: 640px) {
     .article-card {
         grid-template-columns: 1fr;

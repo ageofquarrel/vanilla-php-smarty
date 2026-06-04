@@ -18,4 +18,9 @@ abstract class Controller
     {
         return Response::html($this->view->render($template, $data));
     }
+
+    protected function notFound(string $body = 'Not found'): Response
+    {
+        return Response::notFound($body);
+    }
 }

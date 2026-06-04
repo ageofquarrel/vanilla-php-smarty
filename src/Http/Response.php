@@ -18,6 +18,11 @@ final class Response
         return new self($body, $status, ['Content-Type' => 'text/html; charset=utf-8']);
     }
 
+    public static function notFound(string $body = 'Not found'): self
+    {
+        return self::html($body, 404);
+    }
+
     public function send(): void
     {
         http_response_code($this->status);

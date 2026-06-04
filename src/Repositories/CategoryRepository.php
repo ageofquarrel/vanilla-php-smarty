@@ -11,8 +11,6 @@ final class CategoryRepository
 {
     /**
      * Категории, в которых есть опубликованные статьи.
-     *
-     * @return list<array<string, mixed>>
      */
     public static function findAllWithArticles(): array
     {
@@ -30,5 +28,19 @@ final class CategoryRepository
             SQL;
 
         return Connection::pdo()->query($sql)->fetchAll();
+    }
+
+    /**
+     * Список статей для категории.
+     */
+    public static function findBySlug(string $slug): ?array
+    {
+        $stmt = Connection::pdo()->prepare(
+            'SELECT id, name, slug, description FROM categories WHERE slug = ?'
+        );
+        $stmt->execute([$slug]);
+        $row = $stmt->fetch();
+
+        return $row === false ? null : $row;
     }
 }
