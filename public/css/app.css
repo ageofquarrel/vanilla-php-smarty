@@ -5,6 +5,133 @@
 body {
     font-family: system-ui, sans-serif;
     margin: 0;
-    padding: 1rem 2rem;
+    padding: 0;
     line-height: 1.5;
+    color: #1a1a1a;
+    background: #f7f7f7;
+}
+
+a {
+    color: #1d4ed8;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.site-header {
+    background: #fff;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 1rem 2rem;
+}
+
+.site-logo {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: inherit;
+    text-decoration: none;
+}
+
+.site-main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.recent-posts {
+    margin-bottom: 2rem;
+}
+
+.recent-posts__title {
+    margin: 0 0 1rem;
+}
+
+.category-section {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.category-section__header {
+    margin-bottom: 1rem;
+}
+
+.category-section__title {
+    margin: 0 0 0.5rem;
+}
+
+.category-section__description {
+    margin: 0;
+    color: #4b5563;
+}
+
+.article-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+}
+
+.article-card {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+}
+
+.article-card__image {
+    width: 120px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+    display: block;
+}
+
+.article-card__title {
+    margin: 0 0 0.5rem;
+    font-size: 1.1rem;
+}
+
+.article-card__description {
+    margin: 0 0 0.5rem;
+    color: #4b5563;
+}
+
+.article-card__date {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.category-section__actions {
+    margin: 1rem 0 0;
+}
+
+.button {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border: 1px solid #1d4ed8;
+    border-radius: 4px;
+    color: #1d4ed8;
+    text-decoration: none;
+}
+
+.button:hover {
+    background: #eff6ff;
+    text-decoration: none;
+}
+
+.empty-state {
+    color: #6b7280;
+}
+
+@media (max-width: 640px) {
+    .article-card {
+        grid-template-columns: 1fr;
+    }
 }

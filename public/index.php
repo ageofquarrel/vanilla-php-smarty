@@ -10,4 +10,9 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 $app = App::create(dirname(__DIR__));
 $request = Request::fromGlobals();
 
-$app->router()->dispatch($request);
+[$controllerClass, $action, $params] = $app->router()->dispatch($request);
+
+$controller = new $controllerClass($app->view());
+$response = $controller->$action(...$params);
+
+$response->send();
