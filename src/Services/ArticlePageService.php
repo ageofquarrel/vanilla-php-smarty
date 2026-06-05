@@ -1,0 +1,50 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Services;
+
+use App\Repositories\ArticleRepository;
+use App\Repositories\CategoryRepository;
+
+final class ArticlePageService
+{
+    /**
+     * Получение данных для страницы статьи.
+     */
+    public static function getData(string $slug): ?array
+    {
+        $row = ArticleRepository::findBySlug($slug);
+
+        if ($row === null) {
+            return null;
+        }
+
+        $articleId = (int) $row['id'];
+        ArticleRepository::incrementViews($articleId);
+
+        return [
+            'article' => [
+                'id' => $articleId,
+                'title' => $row['title'],
+                'slug' => $row['slug'],
+                'description' => $row['description'],
+                'body' => $row['body'],
+                'image' => $row['image'],
+                'published_at' => $row['published_at'],
+                'views' => (int) $row['views'] + 1,
+            ],
+            'categories' => array_map(
+                static function (array $category): array {
+                    return [
+                        'id' => (int) $category['id'],
+                        'name' => $category['name'],
+                        'slug' => $category['slug'],
+                    ];
+                },
+                CategoryRepository::findByArticleId($articleId),
+            ),
+            'similar' => [],
+        ];
+    }
+}

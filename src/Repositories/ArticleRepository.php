@@ -13,6 +13,30 @@ final class ArticleRepository
     private const SORT_VIEWS = 'views';
 
     /**
+     * Поиск статьи по slug.
+     */
+    public static function findBySlug(string $slug): ?array
+    {
+        $stmt = Connection::pdo()->prepare(
+            'SELECT id, title, slug, description, body, image, views, published_at
+             FROM articles
+             WHERE slug = ? AND published_at IS NOT NULL'
+        );
+        $stmt->execute([$slug]);
+        $row = $stmt->fetch();
+
+        return $row === false ? null : $row;
+    }
+
+    public static function incrementViews(int $articleId): void
+    {
+        $stmt = Connection::pdo()->prepare(
+            'UPDATE articles SET views = views + 1 WHERE id = ?'
+        );
+        $stmt->execute([$articleId]);
+    }
+
+    /**
      * Поиск последних статей.
      */
     public static function findRecent(int $limit = 3): array

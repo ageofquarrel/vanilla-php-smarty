@@ -43,4 +43,22 @@ final class CategoryRepository
 
         return $row === false ? null : $row;
     }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    public static function findByArticleId(int $articleId): array
+    {
+        $stmt = Connection::pdo()->prepare(
+            'SELECT c.id, c.name, c.slug
+             FROM categories c
+             INNER JOIN article_category ac ON ac.category_id = c.id
+             WHERE ac.article_id = ?
+             ORDER BY c.name ASC'
+        );
+        $stmt->execute([$articleId]);
+        $rows = $stmt->fetchAll();
+
+        return $rows === false ? [] : $rows;
+    }
 }
