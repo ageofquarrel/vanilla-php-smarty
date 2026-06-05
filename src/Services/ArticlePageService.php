@@ -9,6 +9,8 @@ use App\Repositories\CategoryRepository;
 
 final class ArticlePageService
 {
+    private const SIMILAR_ARTICLES_LIMIT = 3;
+
     /**
      * Получение данных для страницы статьи.
      */
@@ -44,7 +46,20 @@ final class ArticlePageService
                 },
                 CategoryRepository::findByArticleId($articleId),
             ),
-            'similar' => [],
+            'similar' => array_map(
+                static function (array $item): array {
+                    return [
+                        'id' => (int) $item['id'],
+                        'title' => $item['title'],
+                        'slug' => $item['slug'],
+                        'description' => $item['description'],
+                        'image' => $item['image'],
+                        'published_at' => $item['published_at'],
+                        'views' => (int) $item['views'],
+                    ];
+                },
+                ArticleRepository::findSimilarByArticleId($articleId, self::SIMILAR_ARTICLES_LIMIT),
+            ),
         ];
     }
 }

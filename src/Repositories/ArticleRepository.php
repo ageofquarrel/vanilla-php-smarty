@@ -37,6 +37,38 @@ final class ArticleRepository
     }
 
     /**
+     * Статьи из общих с текущей категорий (похожие статьи).
+     */
+    public static function findSimilarByArticleId(int $articleId, int $limit = 3): array
+    {
+        $sql = <<<'SQL'
+            SELECT DISTINCT
+                a.id,
+                a.title,
+                a.slug,
+                a.description,
+                a.image,
+                a.published_at,
+                a.views
+            FROM articles a
+            INNER JOIN article_category ac ON ac.article_id = a.id
+            INNER JOIN article_category ac_current ON ac_current.category_id = ac.category_id
+                AND ac_current.article_id = :article_id
+            WHERE a.id != :article_id
+              AND a.published_at IS NOT NULL
+            ORDER BY a.published_at DESC, a.id DESC
+            LIMIT :limit
+            SQL;
+
+        $stmt = Connection::pdo()->prepare($sql);
+        $stmt->bindValue(':article_id', $articleId, PDO::PARAM_INT);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll();
+    }
+
+    /**
      * Поиск последних статей.
      */
     public static function findRecent(int $limit = 3): array
