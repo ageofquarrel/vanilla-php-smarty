@@ -189,6 +189,10 @@ a:hover {
     background: #1e40af;
 }
 
+.category-toolbar__direction {
+    margin-left: 0.25rem;
+}
+
 .pagination {
     display: flex;
     flex-wrap: wrap;

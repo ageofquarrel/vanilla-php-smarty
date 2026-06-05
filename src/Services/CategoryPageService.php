@@ -12,6 +12,8 @@ final class CategoryPageService
     private const PER_PAGE = 10;
     private const SORT_DATE = 'date';
     private const SORT_VIEWS = 'views';
+    private const ORDER_ASC = 'asc';
+    private const ORDER_DESC = 'desc';
 
     /**
      * Получение данных для страницы категории.
@@ -25,7 +27,9 @@ final class CategoryPageService
         }
 
         $categoryId = (int) $category['id'];
+        $categorySlug = (string) $category['slug'];
         $sort = self::resolveSort($query['sort'] ?? null);
+        $order = self::resolveOrder($query['order'] ?? null);
         $total = ArticleRepository::countByCategoryId($categoryId);
         $totalPages = max(1, (int) ceil($total / self::PER_PAGE));
         $page = min(self::resolvePage($query['page'] ?? null), $totalPages);
@@ -35,16 +39,19 @@ final class CategoryPageService
             'category' => [
                 'id' => $categoryId,
                 'name' => $category['name'],
-                'slug' => $category['slug'],
+                'slug' => $categorySlug,
                 'description' => $category['description'],
             ],
             'articles' => array_map(
                 static function (array $row): array {
                     return self::mapArticle($row);
                 },
-                ArticleRepository::findByCategoryId($categoryId, $sort, self::PER_PAGE, $offset),
+                ArticleRepository::findByCategoryId($categoryId, $sort, $order, self::PER_PAGE, $offset),
             ),
             'sort' => $sort,
+            'order' => $order,
+            'sort_date_url' => self::buildSortUrl($categorySlug, self::SORT_DATE, $sort, $order),
+            'sort_views_url' => self::buildSortUrl($categorySlug, self::SORT_VIEWS, $sort, $order),
             'pagination' => [
                 'page' => $page,
                 'per_page' => self::PER_PAGE,
@@ -58,8 +65,25 @@ final class CategoryPageService
         ];
     }
 
+    private static function buildSortUrl(
+        string $categorySlug,
+        string $targetSort,
+        string $currentSort,
+        string $currentOrder
+    ): string {
+        if ($targetSort === $currentSort) {
+            $order = $currentOrder === self::ORDER_DESC ? self::ORDER_ASC : self::ORDER_DESC;
+        } else {
+            $order = self::ORDER_DESC;
+        }
+
+        return '/category/' . rawurlencode($categorySlug)
+            . '?sort=' . $targetSort
+            . '&order=' . $order;
+    }
+
     /**
-     * Определение порядка сортировки для запроса.
+     * Определение типа сортировки для запроса.
      */
     private static function resolveSort(mixed $value): string
     {
@@ -68,6 +92,18 @@ final class CategoryPageService
         }
 
         return self::SORT_DATE;
+    }
+
+    /**
+     * Определение порядка сортировки для запроса.
+     */
+    private static function resolveOrder(mixed $value): string
+    {
+        if ($value === self::ORDER_ASC) {
+            return self::ORDER_ASC;
+        }
+
+        return self::ORDER_DESC;
     }
 
     /**

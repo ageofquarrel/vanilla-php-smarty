@@ -66,10 +66,11 @@ final class ArticleRepository
     public static function findByCategoryId(
         int $categoryId,
         string $sort,
+        string $order,
         int $limit,
         int $offset
     ): array {
-        $orderBy = self::orderByForSort($sort);
+        $orderBy = self::orderByForSort($sort, $order);
 
         $sql = <<<SQL
             SELECT
@@ -100,12 +101,14 @@ final class ArticleRepository
     /**
      * Определение порядка сортировки для запроса.
      */
-    private static function orderByForSort(string $sort): string
+    private static function orderByForSort(string $sort, string $order): string
     {
+        $direction = $order === 'asc' ? 'ASC' : 'DESC';
+
         if ($sort === self::SORT_VIEWS) {
-            return 'a.views DESC, a.id DESC';
+            return "a.views {$direction}, a.id {$direction}";
         }
 
-        return 'a.published_at DESC, a.id DESC';
+        return "a.published_at {$direction}, a.id {$direction}";
     }
 }

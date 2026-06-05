@@ -17,13 +17,23 @@
     <div class="category-toolbar">
         <span class="category-toolbar__label">Сортировка:</span>
         <a
-            href="/category/{$category.slug|escape:'url'}?sort=date"
+            href="{$sort_date_url|escape:'html'}"
             class="category-toolbar__link{if $sort == 'date'} is-active{/if}"
-        >По дате публикации</a>
+        >
+            По дате публикации
+            {if $sort == 'date'}
+                <span class="category-toolbar__direction">{if $order == 'desc'}↓{else}↑{/if}</span>
+            {/if}
+        </a>
         <a
-            href="/category/{$category.slug|escape:'url'}?sort=views"
+            href="{$sort_views_url|escape:'html'}"
             class="category-toolbar__link{if $sort == 'views'} is-active{/if}"
-        >По просмотрам</a>
+        >
+            По просмотрам
+            {if $sort == 'views'}
+                <span class="category-toolbar__direction">{if $order == 'desc'}↓{else}↑{/if}</span>
+            {/if}
+        </a>
     </div>
 
     {if $articles|@count == 0}
@@ -70,7 +80,7 @@
             <nav class="pagination" aria-label="Навигация по страницам">
                 {if $pagination.has_prev}
                     <a
-                        href="/category/{$category.slug|escape:'url'}?sort={$sort|escape:'url'}&amp;page={$pagination.prev_page}"
+                        href="/category/{$category.slug|escape:'url'}?sort={$sort|escape:'url'}&amp;order={$order|escape:'url'}&amp;page={$pagination.prev_page}"
                         class="pagination__link"
                     >Назад</a>
                 {/if}
@@ -81,7 +91,7 @@
 
                 {if $pagination.has_next}
                     <a
-                        href="/category/{$category.slug|escape:'url'}?sort={$sort|escape:'url'}&amp;page={$pagination.next_page}"
+                        href="/category/{$category.slug|escape:'url'}?sort={$sort|escape:'url'}&amp;order={$order|escape:'url'}&amp;page={$pagination.next_page}"
                         class="pagination__link"
                     >Вперёд</a>
                 {/if}
