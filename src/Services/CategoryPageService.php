@@ -9,10 +9,14 @@ use App\Repositories\CategoryRepository;
 
 final class CategoryPageService
 {
+    private const PER_PAGE = 10;
+    private const SORT_DATE = 'date';
+    private const SORT_VIEWS = 'views';
+
     /**
      * Получение данных для страницы категории.
      */
-    public static function getData(string $slug): ?array
+    public static function getData(string $slug, array $query): ?array
     {
         $category = CategoryRepository::findBySlug($slug);
 
@@ -21,6 +25,11 @@ final class CategoryPageService
         }
 
         $categoryId = (int) $category['id'];
+        $sort = self::resolveSort($query['sort'] ?? null);
+        $total = ArticleRepository::countByCategoryId($categoryId);
+        $totalPages = max(1, (int) ceil($total / self::PER_PAGE));
+        $page = min(self::resolvePage($query['page'] ?? null), $totalPages);
+        $offset = ($page - 1) * self::PER_PAGE;
 
         return [
             'category' => [
@@ -31,18 +40,63 @@ final class CategoryPageService
             ],
             'articles' => array_map(
                 static function (array $row): array {
-                    return [
-                        'id' => (int) $row['id'],
-                        'title' => $row['title'],
-                        'slug' => $row['slug'],
-                        'description' => $row['description'],
-                        'image' => $row['image'],
-                        'published_at' => $row['published_at'],
-                        'views' => (int) $row['views'],
-                    ];
+                    return self::mapArticle($row);
                 },
-                ArticleRepository::findAllByCategoryId($categoryId),
+                ArticleRepository::findByCategoryId($categoryId, $sort, self::PER_PAGE, $offset),
             ),
+            'sort' => $sort,
+            'pagination' => [
+                'page' => $page,
+                'per_page' => self::PER_PAGE,
+                'total' => $total,
+                'total_pages' => $totalPages,
+                'has_prev' => $page > 1,
+                'has_next' => $page < $totalPages,
+                'prev_page' => $page > 1 ? $page - 1 : null,
+                'next_page' => $page < $totalPages ? $page + 1 : null,
+            ],
+        ];
+    }
+
+    /**
+     * Определение порядка сортировки для запроса.
+     */
+    private static function resolveSort(mixed $value): string
+    {
+        if ($value === self::SORT_VIEWS) {
+            return self::SORT_VIEWS;
+        }
+
+        return self::SORT_DATE;
+    }
+
+    /**
+     * Определение номера страницы для запроса.
+     */
+    private static function resolvePage(mixed $value): int
+    {
+        $page = filter_var($value, FILTER_VALIDATE_INT);
+
+        if ($page === false || $page < 1) {
+            return 1;
+        }
+
+        return $page;
+    }
+
+    /**
+     * Преобразование строки статьи в массив.
+     */
+    private static function mapArticle(array $row): array
+    {
+        return [
+            'id' => (int) $row['id'],
+            'title' => $row['title'],
+            'slug' => $row['slug'],
+            'description' => $row['description'],
+            'image' => $row['image'],
+            'published_at' => $row['published_at'],
+            'views' => (int) $row['views'],
         ];
     }
 }

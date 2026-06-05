@@ -14,6 +14,18 @@
         {/if}
     </header>
 
+    <div class="category-toolbar">
+        <span class="category-toolbar__label">Сортировка:</span>
+        <a
+            href="/category/{$category.slug|escape:'url'}?sort=date"
+            class="category-toolbar__link{if $sort == 'date'} is-active{/if}"
+        >По дате публикации</a>
+        <a
+            href="/category/{$category.slug|escape:'url'}?sort=views"
+            class="category-toolbar__link{if $sort == 'views'} is-active{/if}"
+        >По просмотрам</a>
+    </div>
+
     {if $articles|@count == 0}
         <p class="empty-state">В этой категории пока нет статей.</p>
     {else}
@@ -47,13 +59,33 @@
                                     {$article.published_at|date_format:"%d.%m.%Y"}
                                 </time>
                             {/if}
-                            {if $article.views}
-                                <span class="article-card__views">{$article.views|escape} просмотров</span>
-                            {/if}
+                            <span class="article-card__views">{$article.views|escape} просмотров</span>
                         </p>
                     </div>
                 </li>
             {/foreach}
         </ul>
+
+        {if $pagination.total_pages > 1}
+            <nav class="pagination" aria-label="Навигация по страницам">
+                {if $pagination.has_prev}
+                    <a
+                        href="/category/{$category.slug|escape:'url'}?sort={$sort|escape:'url'}&amp;page={$pagination.prev_page}"
+                        class="pagination__link"
+                    >Назад</a>
+                {/if}
+
+                <span class="pagination__info">
+                    Страница {$pagination.page|escape} из {$pagination.total_pages|escape}
+                </span>
+
+                {if $pagination.has_next}
+                    <a
+                        href="/category/{$category.slug|escape:'url'}?sort={$sort|escape:'url'}&amp;page={$pagination.next_page}"
+                        class="pagination__link"
+                    >Вперёд</a>
+                {/if}
+            </nav>
+        {/if}
     {/if}
 {/block}

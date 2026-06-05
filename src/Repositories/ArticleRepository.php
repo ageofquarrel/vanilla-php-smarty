@@ -9,6 +9,9 @@ use PDO;
 
 final class ArticleRepository
 {
+    private const SORT_DATE = 'date';
+    private const SORT_VIEWS = 'views';
+
     /**
      * Поиск последних статей.
      */
@@ -37,11 +40,38 @@ final class ArticleRepository
     }
 
     /**
-     * Все статьи для категории.
+     * Подсчет количества статей для категории.
      */
-    public static function findAllByCategoryId(int $categoryId): array
+    public static function countByCategoryId(int $categoryId): int
     {
         $sql = <<<'SQL'
+            SELECT COUNT(DISTINCT a.id)
+            FROM articles a
+            INNER JOIN article_category ac ON ac.article_id = a.id
+            WHERE ac.category_id = :category_id
+              AND a.published_at IS NOT NULL
+            SQL;
+
+        $stmt = Connection::pdo()->prepare($sql);
+        $stmt->bindValue(':category_id', $categoryId, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return (int) $stmt->fetchColumn();
+    }
+
+
+    /**
+     * Список статей для категории.
+     */
+    public static function findByCategoryId(
+        int $categoryId,
+        string $sort,
+        int $limit,
+        int $offset
+    ): array {
+        $orderBy = self::orderByForSort($sort);
+
+        $sql = <<<SQL
             SELECT
                 a.id,
                 a.title,
@@ -54,13 +84,28 @@ final class ArticleRepository
             INNER JOIN article_category ac ON ac.article_id = a.id
             WHERE ac.category_id = :category_id
               AND a.published_at IS NOT NULL
-            ORDER BY a.published_at DESC, a.id DESC
+            ORDER BY {$orderBy}
+            LIMIT :limit OFFSET :offset
             SQL;
 
         $stmt = Connection::pdo()->prepare($sql);
         $stmt->bindValue(':category_id', $categoryId, PDO::PARAM_INT);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
 
         return $stmt->fetchAll();
+    }
+
+    /**
+     * Определение порядка сортировки для запроса.
+     */
+    private static function orderByForSort(string $sort): string
+    {
+        if ($sort === self::SORT_VIEWS) {
+            return 'a.views DESC, a.id DESC';
+        }
+
+        return 'a.published_at DESC, a.id DESC';
     }
 }

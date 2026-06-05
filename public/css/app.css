@@ -157,6 +157,64 @@ a:hover {
     margin-left: 1rem;
 }
 
+.category-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+}
+
+.category-toolbar__label {
+    font-weight: 600;
+}
+
+.category-toolbar__link {
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    text-decoration: none;
+}
+
+.category-toolbar__link.is-active {
+    background: #1d4ed8;
+    color: #fff;
+}
+
+.category-toolbar__link.is-active:hover {
+    text-decoration: none;
+    background: #1e40af;
+}
+
+.pagination {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+.pagination__link {
+    padding: 0.5rem 1rem;
+    border: 1px solid #1d4ed8;
+    border-radius: 4px;
+    text-decoration: none;
+}
+
+.pagination__link:hover {
+    background: #eff6ff;
+    text-decoration: none;
+}
+
+.pagination__info {
+    color: #4b5563;
+}
+
 @media (max-width: 640px) {
     .article-card {
         grid-template-columns: 1fr;
